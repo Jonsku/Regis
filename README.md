@@ -1,4 +1,4 @@
-Regis
+Régis
 =====
 
 Régis is an HTML5 personal accounts information register.
@@ -10,18 +10,18 @@ This is achieved by storing the information register inside the browser local st
 The backend is build with Node.js + Express.
 The data is stored inside Comma Separated Value (CSV) files.
 
-Security:
+## Security
 
-Confidential data (user names's and passwords) is encrypted using the Vigenère cipher (http://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher)
+Confidential data (user names's and passwords) is encrypted using the [Vigenère cipher](http://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher)
 While they are statistical methods to break this cipher, in the context of this application (encrypting short, 'meaningless' strings) it will keep your data secure if you follow these rules:
 - Régis accept any unicode character in the password string, so be sure that you use a mix of letters, numbers and symbols when choosing a password for the register.
 - Choose a register password that will be as long or longer than most of your existing passwords and user names. This will make the encryption very strong.
 
 
-Support for multiple users, anonymous: 
+## Support for multiple users, anonymous 
 
 Régis can handle multiple users, each user getting her own dedicated CSV file to hold her register data.
-IMPORTANT: Régis does not keep a record of the name and password you used to create the register, it actually does not keep a record of its users, the only information that matters to Régis is the register which can be identified by the name of the user encrypted using her password. The benefit is that the registers are anonymous, but the downside is that Régis WILL NOT BE ABLE TO RETURN OR RESET YOUR PASSWORD OR USERNAME IF YOU FORGET THEM!
+IMPORTANT: Régis does not keep a record of the name and password you used to create the register, it actually does not keep a record of its users, the only information that matters to Régis is the register which can be identified by the name of the user encrypted using her password. The benefit is that the registers are anonymous, but the downside is that Régis **WILL NOT BE ABLE TO RETURN OR RESET YOUR PASSWORD OR USERNAME IF YOU FORGET THEM!**
 
 Another effect of this is that two different users can share the same name as long as their passwords are different.
 
