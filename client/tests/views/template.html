@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}{% endblock %} tests</title>
+  <link rel="stylesheet" media="all" href="../css/libs/mocha.css">
+</head>
+<body>
+  <div id="mocha"><p><a href=".">Index</a></p></div>
+  <div id="messages"></div>
+  <div id="fixtures"></div>
+  <script data-main="{% block testScript %}{% endblock %}" src="../js/require.js"></script>
+</body>
+</html>

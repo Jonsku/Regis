@@ -1,0 +1,19 @@
+body{
+	background-color: turquoise;
+}
+
+input.error{
+	border: 2px solid #ff0000;
+}
+
+.save, .cancel{
+	display:none;
+}
+
+.editMode .save, .editMode .cancel{
+	display:inline-block;
+}
+
+.editMode .edit, .editMode .delete{
+	display:none;
+}
