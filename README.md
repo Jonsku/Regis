@@ -7,25 +7,27 @@ It helps you keep track of your login information for different sites and servic
 Régis can work offline too, meaning you can still access your information even if you can't connect to a server running Régis.
 This is achieved by storing the information register inside the browser local storage when in offline mode and forcing caching of Régis code using the cahce manifest.
 
-The backend is build with Node.js + Express.
-The data is stored inside Comma Separated Value (CSV) files.
+The backend is build with [Node.js](http://nodejs.org/), [Express](http://expressjs.com/).
+The application code also makes use of [Joseph Myers JavaScript implementation of md5 sum](http://www.myersdaily.org/joseph/javascript/md5-text.html).
+The data is stored inside Comma Separated Value (CSV) files using a simple custom data management system.
 
-## Security
+### Security
 
 Confidential data (user names's and passwords) is encrypted using the [Vigenère cipher](http://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher)
 While they are statistical methods to break this cipher, in the context of this application (encrypting short, 'meaningless' strings) it will keep your data secure if you follow these rules:
+- Do not use a password you have been using somewhere else
 - Régis accept any unicode character in the password string, so be sure that you use a mix of letters, numbers and symbols when choosing a password for the register.
 - Choose a register password that will be as long or longer than most of your existing passwords and user names. This will make the encryption very strong.
 
 
-## Support for multiple users, anonymous 
+### Support for multiple users, anonymous 
 
 Régis can handle multiple users, each user getting her own dedicated CSV file to hold her register data.
 IMPORTANT: Régis does not keep a record of the name and password you used to create the register, it actually does not keep a record of its users, the only information that matters to Régis is the register which can be identified by the name of the user encrypted using her password. The benefit is that the registers are anonymous, but the downside is that Régis **WILL NOT BE ABLE TO RETURN OR RESET YOUR PASSWORD OR USERNAME IF YOU FORGET THEM!**
 
 Another effect of this is that two different users can share the same name as long as their passwords are different.
 
-Licence:
+### Licence
 
 The MIT License (MIT)
 
