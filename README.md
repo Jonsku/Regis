@@ -9,6 +9,7 @@ This is achieved by storing the information register inside the browser local st
 
 The backend is build with [Node.js](http://nodejs.org/), [Express](http://expressjs.com/).
 The application code also makes use of [Joseph Myers JavaScript implementation of md5 sum](http://www.myersdaily.org/joseph/javascript/md5-text.html).
+
 The data is stored inside Comma Separated Value (CSV) files using a simple custom data management system.
 
 ### Security
