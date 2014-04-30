@@ -1,16 +1,26 @@
 Régis
 =====
 
+
 Régis is an HTML5 personal accounts information register.
 It helps you keep track of your login information for different sites and services by locking them under a single name and password combination.
 
-Régis can work offline too, meaning you can still access your information even if you can't connect to a server running Régis.
-This is achieved by storing the information register inside the [browser local storage](http://www.html5rocks.com/en/features/storage) when in offline mode and forcing caching of Régis code using a [cache manifest](http://www.html5rocks.com/en/tutorials/appcache/beginner/).
+### Languages, libraries, frameworks
 
-The backend is build with [Node.js](http://nodejs.org/), [Express](http://expressjs.com/).
+Régis is written in JavaScript, HTML and CSS.
+The backend is build with [Node.js](http://nodejs.org/) and [Express](http://expressjs.com/).
 The application code also makes use of [Joseph Myers JavaScript implementation of md5 sum](http://www.myersdaily.org/joseph/javascript/md5-text.html).
 
 The data is stored inside Comma Separated Value (CSV) files using a simple custom data management system.
+
+The goal of this design is to maximize compatibility of the code so as to work on both front and back end.
+
+### Offline mode
+
+Régis can work offline too, meaning you can still access your information even if you can't connect to a server running Régis.
+
+This is achieved by storing the information register inside the [browser local storage](http://www.html5rocks.com/en/features/storage) when in offline mode and forcing caching of Régis code using a [cache manifest](http://www.html5rocks.com/en/tutorials/appcache/beginner/).
+
 
 ### Security
 
