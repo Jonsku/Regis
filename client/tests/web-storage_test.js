@@ -8,7 +8,7 @@ requirejs.config({
 });             
                         
 // Load the main app module to start the app
-requirejs(["test/utilities","common/vigenere","common/myers-md5","libs/chai","local-storage","libs/mocha"], function(testUtil, vigenere, md5, chai, storage){
+requirejs(["test/utilities","common/vigenere","common/myers-md5","libs/chai","web-storage","libs/mocha"], function(testUtil, vigenere, md5, chai, storage){
   storage = storage();
   mocha.setup('bdd');
 	var expect = chai.expect;

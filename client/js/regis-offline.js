@@ -1,4 +1,4 @@
-define(['jquery','local-storage','common/controller'],function($, storage, controller){
+define(['jquery','web-storage','common/controller'],function($, storage, controller){
 	var offlineCredentials = false;
 	var data = storage();
 
