@@ -12,8 +12,15 @@ define(['common/vigenere','common/myers-md5'], function(vigenere, md5){
 		},
 
 		encryptRecord: function(recordObj, credentials){
-			recordObj.username = storage.encrypt(recordObj.username, credentials.password);
-			recordObj.password = storage.encrypt(recordObj.password, credentials.password);
+			var encryptedRecord = JSON.parse(JSON.stringify(recordObj));
+			encryptedRecord.username = storage.encrypt(recordObj.username, credentials.password);
+			encryptedRecord.password = storage.encrypt(recordObj.password, credentials.password);
+			return encryptedRecord;
+		},
+
+		decryptRecord: function(recordObj, credentials){
+			recordObj.username = storage.decrypt(recordObj.username, credentials.password);
+			recordObj.password = storage.decrypt(recordObj.password, credentials.password);
 			return recordObj;
 		},
 
@@ -27,14 +34,30 @@ define(['common/vigenere','common/myers-md5'], function(vigenere, md5){
 		},
 				
 		readAllRecords: function(credentials, callback, reverse){
-			console.log("Not implemented");
+			throw "Not implemented: please use a concrete implementation of the storage module";
 		},
 		
 		
 		createRecord: function(credentials, newEntry, callback){
-			console.log("Not implemented");
+			throw "Not implemented: please use a concrete implementation of the storage module";
 		},
 		
+		
+		deleteRecord: function(credentials, recordId, callback){
+			throw "Not implemented: please use a concrete implementation of the storage module";
+		},
+	
+		updateRecord: function(credentials, recordId, updatedEntry, callback){
+			throw "Not implemented: please use a concrete implementation of the storage module";
+		},
+
+		/**
+			Overwrite the content of a register
+		*/
+		overwriteRegister: function(credentials, newRegister, callback){
+			throw "Not implemented: please use a concrete implementation of the storage module";
+		},
+	
 		/**
 			Delete a single record from raw register data and return the updated raw register
 		*/
@@ -42,14 +65,10 @@ define(['common/vigenere','common/myers-md5'], function(vigenere, md5){
 			//Split file by lines		
 			var rows = register.split(/\n/);
 			//Remove the line at recordId
-			rows.splice(recordId,1);
+			rows.splice(recordId - 1,1);
 
 			//Repack entire register as string and overwrite file
 			return rows.join("\n");
-		},
-		
-		deleteRecord: function(credentials, recordId, callback){
-			console.log("Not implemented");
 		},
 		
 		/**
@@ -65,17 +84,6 @@ define(['common/vigenere','common/myers-md5'], function(vigenere, md5){
 
 			//Repack entire register as string and overwrite file
 			return rows.join("\n");
-		},
-		
-		updateRecord: function(credentials, recordId, updatedEntry, callback){
-			console.log("Not implemented");
-		},
-
-		/**
-			Overwrite the content of a register
-		*/
-		overwriteRegister: function(credentials, newRegister, callback){
-			console.log("Not implemented");
 		},
 
 		//Validate record
@@ -106,20 +114,7 @@ define(['common/vigenere','common/myers-md5'], function(vigenere, md5){
 		},
 
 		getNextId: function(data){
-		    return data.split("\n").length;
-		  /*
-		    data =""; subString = "\n";
-		    if(subString.length<=0) return data.length+1;
-
-		    var n=0, pos=0;
-		    var step = subString.length; //(allowOverlapping)?(1):(subString.length);
-			
-		    while(true){
-			pos=data.indexOf(subString,pos);
-			if(pos>=0){ n++; pos+=step; } else break;
-		    }
-		    return n;
-		  */
+		    return data ? data.split("\n").length : 1;
 		},
 		
 		//Convert a JSON record object to a string
@@ -131,8 +126,6 @@ define(['common/vigenere','common/myers-md5'], function(vigenere, md5){
 			stringyfied += '"'+encodeURIComponent( record.username )+'",';		
 			stringyfied += '"'+encodeURIComponent( record.password )+'"';
 						
-			//stringyfied += '"'+encodeURIComponent( vigenere.encrypt( record.username, credentials.password ) )+'",';		
-			//stringyfied += '"'+encodeURIComponent( vigenere.encrypt( record.password, credentials.password ) )+'"\n';
 			return stringyfied;
 		},
 		
@@ -170,8 +163,6 @@ define(['common/vigenere','common/myers-md5'], function(vigenere, md5){
 				url: decodeURIComponent( row[storage.COL_URL].replace(/"/g,'') ),
 				username: decodeURIComponent( row[storage.COL_USERNAME].replace(/"/g,'') ),
 				password:decodeURIComponent( row[storage.COL_PASSWORD].replace(/"/g,'') )
-				//username: vigenere.decrypt( decodeURIComponent( row[storage.COL_USERNAME].replace(/"/g,'') ), credentials.password ),
-				//password: vigenere.decrypt( decodeURIComponent( row[storage.COL_PASSWORD].replace(/"/g,'') ), credentials.password )
 			};
 		},
 		
@@ -192,8 +183,6 @@ define(['common/vigenere','common/myers-md5'], function(vigenere, md5){
 		}
 
 	};
-	
-	
-	
+		
 	return storage;
 });

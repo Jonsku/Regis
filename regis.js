@@ -10,7 +10,7 @@ requirejs.config({
     }
 });
 
-requirejs(['hello','express','body-parser', 'express-session', 'cookie-parser', 'consolidate','server/routes'], function(hello, express, bodyParser, session, cookieParser, cons, routes){
+requirejs(['express','body-parser', 'express-session', 'cookie-parser', 'consolidate','server/routes'], function( express, bodyParser, session, cookieParser, cons, routes){
 	var app = express();
 	// assign the swig engine to .html files
 	app.engine('html',cons.swig);
@@ -37,7 +37,6 @@ requirejs(['hello','express','body-parser', 'express-session', 'cookie-parser', 
 
 	//start HTTP server and listen for query
 	var server = app.listen(3000, function() {
-		hello.say("Hello Carole!");
-    	console.log('Listening on port %d', server.address().port);
+    		console.log('Listening on port %d', server.address().port);
 	});
 });

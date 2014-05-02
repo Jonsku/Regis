@@ -1,80 +1,34 @@
 requirejs.config({
     "baseUrl": "../js",
     "paths": {
-      "test": './',
+      "test": '../tests/',
       //Regis lives on the bleeding edge, he does not care for IE < 9
       "jquery": "//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min"
     }           
 });             
                         
 // Load the main app module to start the app
-requirejs(["common/vigenere","common/myers-md5","libs/chai","common/storage","libs/mocha"], function(vigenere, md5, chai, storage){
+requirejs(["test/utilities", "common/vigenere","common/myers-md5","libs/chai","common/storage","libs/mocha"], function(testUtil, vigenere, md5, chai, storage){
   mocha.setup('bdd');
 	var expect = chai.expect;
 	
-	
-	var jsonRecord = {
-		id:0,
-		name:'Account,name à!ç!"',
-		description:'Some\ndescription 123,44 $ô-_\'\""',
-		url:'http://www.google.com/test=1,234&var1=süpâ12!',
-		username:'th3_u$er,näme*',
-		password:'<br>A p4F,swç9ö,'
-	};
-	var updatedRecord = {
-		id:1,
-		name:"I'm changed",
-		description:'1234Some\ndescription 123,44 $ô-_\'\""',
-		url:'http://www.google.com/test=1,234&var1=süpâ12!',
-		username:'th3_u$er,näme*',
-		password:'<br>A p4F,swç9ö,'
-	};
-
-
-	var stringRecord = '"'+encodeURIComponent( jsonRecord.name )+'",';
-	stringRecord +=  '"'+encodeURIComponent( jsonRecord.description )+'",';
-	stringRecord +=  '"'+encodeURIComponent( jsonRecord.url )+'",';
-	stringRecord +=  '"'+encodeURIComponent( jsonRecord.username )+'",';	
-	stringRecord +=  '"'+encodeURIComponent( jsonRecord.password )+'"';
-
-	
-	var stringUpdatedRecord = '"'+encodeURIComponent( updatedRecord.name )+'",';
-	stringUpdatedRecord +=  '"'+encodeURIComponent( updatedRecord.description )+'",';
-	stringUpdatedRecord +=  '"'+encodeURIComponent( updatedRecord.url )+'",';
-	stringUpdatedRecord +=  '"'+encodeURIComponent( updatedRecord.username )+'",';	
-	stringUpdatedRecord +=  '"'+encodeURIComponent( updatedRecord.password )+'"';
-
-	var jsonRegister = [ JSON.parse(JSON.stringify(jsonRecord)), JSON.parse(JSON.stringify(jsonRecord)), JSON.parse(JSON.stringify(jsonRecord)) ];
-	for(var r in jsonRegister){ jsonRegister[r].id = Number(r)+1; };
-
-	//Unsorted register
-	var unsortedRegister = JSON.parse( JSON.stringify(jsonRegister) );
-	unsortedRegister[0].name = 'e';
-	unsortedRegister[1].name = 'a';
-	unsortedRegister[2].name = 'b';
-
-	var sortedRegister = JSON.parse( JSON.stringify(unsortedRegister) );
-	var tmp = sortedRegister[0];
-	sortedRegister[0] = sortedRegister[1];
-	sortedRegister[1] = sortedRegister[2];
-	sortedRegister[2] = tmp; 
-
-	var reverseSortedRegister = [ sortedRegister[2], sortedRegister[1], sortedRegister[0] ];
-
-	var register = stringRecord+"\n"+stringRecord+"\n"+stringRecord+"\n";
-	var updatedRegister = stringRecord+"\n"+stringUpdatedRecord+"\n"+stringRecord+"\n";
 	describe("Storage.js", function(){
 		
 		describe("encrypt", function(){
-
+			var jsonRecord = testUtil.generateRecord();
 			it("should encrypt an unicode string using the vigenere cypher and a given password", function(){
 				expect( storage.encrypt( jsonRecord.description, jsonRecord.password ) ).to.equal( vigenere.encrypt( jsonRecord.description, jsonRecord.password ) );
 			});
 		});
 
 		describe("getRegisterName", function(){
+			var credentials = {
+				name: testUtil.generateString( testUtil.generateInteger(5,10), true),
+				password: testUtil.generateString( testUtil.generateInteger(5,10) )
+			};
+			
 			it("should return the register name as the username encrypted using the vigenere cypher using the user's password", function(){
-				expect( storage.getRegisterName( {name: jsonRecord.username, password: jsonRecord.password } ) ).to.equal( vigenere.encrypt( jsonRecord.username, jsonRecord.password  )  );
+				expect( storage.getRegisterName( credentials  ) ).to.equal( vigenere.encrypt( credentials.name, credentials.password  )  );
 			});
 		});
 
@@ -114,50 +68,93 @@ requirejs(["common/vigenere","common/myers-md5","libs/chai","common/storage","li
 				expect( storage.validateRecord( record ) ).to.include.keys(['name', 'username', 'password']);
 			});
 			it("should return true if the record name, username and password are set", function(){
-				expect( storage.validateRecord(jsonRecord) ).to.be.true;
+				expect( storage.validateRecord( testUtil.generateRecord() ) ).to.be.true;
 			});	
 		});
 
 		describe("serializeRecord", function(){
-
+			var jsonRecord = testUtil.generateRecord();
 			it("should return a record in JSON as comma separated, properly escaped and double quoted values string", function(){
-				expect( storage.serializeRecord( jsonRecord ) ).to.equal(stringRecord);
+				expect( storage.serializeRecord( jsonRecord ) ).to.equal( testUtil.recordToString( jsonRecord ) );
 			});
 		});
 
 		describe("deserializeRecord", function(){
+			var jsonRecord = testUtil.generateRecord();
+			jsonRecord.id = testUtil.generateInteger(0,1000);
 			it("should return a record in a string format as a record in JSON format with its field properly unquoted and unescaped, and its ID set to specified one", function(){
-				expect( storage.deserializeRecord( stringRecord, 0) ).to.deep.equal(jsonRecord);	
+				expect( storage.deserializeRecord( testUtil.recordToString( jsonRecord ), jsonRecord.id) ).to.deep.equal(jsonRecord);	
 			});
 		});
 
 		describe("getRegisterHash", function(){
+			var registerJson = testUtil.generateRecords( testUtil.generateInteger(0,20) );
+			var registerTxt =  testUtil.recordsToString( registerJson  );
+
 			it("should return the md5 sum of a register provided in string format", function(){
-				expect( storage.getRegisterHash( register  )).to.equal( md5(register) );
+				expect( storage.getRegisterHash( registerTxt  )).to.equal( md5(registerTxt) );
 			});
 		});
 
 		describe("getNextId", function(){
+			var registerJson = testUtil.generateRecords( testUtil.generateInteger(0,20) );
+                        var registerTxt =  testUtil.recordsToString( registerJson  );
 			it("should return the count + 1 of record in a register provided in string format", function(){
+
+				expect( storage.getNextId( undefined ) ).to.be.equal( 1 );
+				expect( storage.getNextId( null ) ).to.be.equal( 1 );
+				expect( storage.getNextId( false ) ).to.be.equal( 1 );
 				expect( storage.getNextId( "" ) ).to.be.equal( 1 );
-				expect( storage.getNextId( register ) ).to.be.equal( 4 );
+				expect( storage.getNextId( registerTxt ) ).to.be.equal( registerJson.length + 1 );
+			});
+		});
+
+		describe("deleteFromRegister", function(){
+			
+			it("should delete a record specified by its ID from a string register and return the updated register string", function(){
+				var registerJson = testUtil.generateRecords( testUtil.generateInteger(1,10) );
+				var idToDelete = testUtil.generateInteger(1, registerJson.length + 1);
+				var beforeRegister = testUtil.recordsToString( registerJson );
+				registerJson.splice(idToDelete - 1, 1);
+				var afterRegister = testUtil.recordsToString( registerJson );
+				expect( storage.deleteFromRegister( idToDelete, beforeRegister ) ).to.equal( afterRegister );
 			});
 		});
 
 		describe("updateInRegister", function(){
-			it("should return the register in string format with the record specified by id  updated", function(){
-				expect( storage.updateInRegister(2,updatedRecord,register) ).to.be.equal( updatedRegister );
+			var registerJson = testUtil.generateRecords( testUtil.generateInteger(1,7) );
+			var registerTxtBefore =  testUtil.recordsToString( registerJson  );
+			//update a record
+			var updatedId = testUtil.generateInteger(1, registerJson.length + 1);
+			var updatedRecord = testUtil.generateRecord();
+			registerJson[updatedId - 1] = updatedRecord;
+			var registerTxtAfter =  testUtil.recordsToString( registerJson  );
+
+			var storageRes = storage.updateInRegister(updatedId, updatedRecord, registerTxtBefore);
+			it("should return the register in string format with the record specified by its id updated", function(){
+				expect( storageRes ).to.be.equal( registerTxtAfter );
 			});
 		});
 
 		describe("deserializeRegister", function(){
-			it("should return an array of records in JSON format from a register in string forma", function(){
+			 var registerJson = testUtil.generateRecords( testUtil.generateInteger(0,7) );
+			var registerTxt =  testUtil.recordsToString( registerJson  );
+			it("should return an array of records in JSON format from a register in string format", function(){
 				expect( storage.deserializeRegister( "" ) ).to.deep.equal( [] );
-				expect( storage.deserializeRegister( register ) ).to.deep.equal( jsonRegister  );
+				expect( storage.deserializeRegister( registerTxt ) ).to.deep.equal( registerJson  );
 			});
 		});
 
 		describe("sortRecords", function(){
+			var unsortedRegister = testUtil.generateRecords( testUtil.generateInteger(0,7) );
+			var sortedRegister = JSON.parse( JSON.stringify(unsortedRegister) );
+			sortedRegister.sort( function(a, b){
+                                if (a.name.toUpperCase() < b.name.toUpperCase() ) return -1;
+                                if (a.name.toUpperCase() > b.name.toUpperCase() ) return 1;
+                                return 0;
+                        } );
+			var reverseSortedRegister = JSON.parse( JSON.stringify(sortedRegister) );
+			reverseSortedRegister.reverse(); 
 			it("should sort an array of records alphabeticaly (and reverse) based on the names of the records ", function(){
 				expect( storage.sortRecords(unsortedRegister) ).to.deep.equal( sortedRegister );
 				expect( storage.sortRecords(unsortedRegister, true) ).to.deep.equal( reverseSortedRegister );

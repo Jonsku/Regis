@@ -29,8 +29,11 @@ define(['common/storage', 'common/vigenere'], function(storage, vigenere){
 			newEntry.id = storage.getNextId( localStorage[registerKey] );
 
 			var stringyfied = storage.serializeRecord( newEntry );			
-
-			localStorage[registerKey] +=  stringyfied + "\n"	
+			if( localStorage[registerKey] ){
+				localStorage[registerKey] += stringyfied + "\n";
+			}else{
+				localStorage[registerKey] = stringyfied + "\n";
+			}
 			callback( newEntry );
 		};
 	
